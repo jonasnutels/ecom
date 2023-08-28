@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Form,
   Input,
@@ -14,32 +14,8 @@ import {
 } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 import Highlighter from "react-highlight-words";
+import {supabase} from '../../../../_auth/Supabase'
 
-const originData = [
-  {
-    key: "0",
-    user_id: "1",
-    user: "Jonas Nutels",
-    ativo: true,
-    role:'Admin'
-  },
-  {
-    key: "1",
-    user_id: "2",
-    user: "Ricardo Gomes",
-    ativo: true,
-    role:'PJ'
-
-  },
-  {
-    key: "2",
-    user_id: "3",
-    user: "Manoel",
-    ativo: false,
-    role:'Admin'
-
-},
-];
 const EditableCell = ({
   editing,
   dataIndex,
@@ -73,6 +49,22 @@ const EditableCell = ({
   );
 };
 const UsuariosAdmin = () => {
+
+  const [dadosUsuario, setDadosUsuario] = useState();
+
+  const fetchDadosUsuarios = async () => {
+    const { data } = await supabase
+      .from("usuario")
+      .select("*");
+      setDadosUsuario(data)
+    console.log(dadosUsuario)
+    }
+
+  useEffect(()=> {
+    fetchDadosUsuarios();
+  }),[]
+
+
   const getColumnSearchProps = (dataIndex) => ({
     filterDropdown: ({
       setSelectedKeys,
@@ -176,7 +168,7 @@ const UsuariosAdmin = () => {
       ),
   });
   const [form] = Form.useForm();
-  const [data, setData] = useState(originData);
+  const [data, setData] = useState(dadosUsuario);
   const [editingKey, setEditingKey] = useState("");
   const isEditing = (record) => record.key === editingKey;
   const edit = (record) => {
@@ -213,27 +205,36 @@ const UsuariosAdmin = () => {
       console.log("Validate Failed:", errInfo);
     }
   };
+
   const columns = [
       {
-        title: "Usuário ID",
-        dataIndex: "user_id",
+        
+        title: "Data de criação",
+        dataIndex: "created_at",
         width: "25%",
         editable: true,
-        ...getColumnSearchProps("user_id"),
+        ...getColumnSearchProps("created_at"),
+      },
+      {
+        title: "Usuário",
+        dataIndex: "usuario",
+        width: "25%",
+        editable: true,
+        ...getColumnSearchProps("usuario"),
       },
     {
-      title: "Usuário",
-      dataIndex: "user",
+      title: "ID",
+      dataIndex: "id",
       width: "25%",
       editable: true,
-      ...getColumnSearchProps("user"),
+      ...getColumnSearchProps("id"),
     },
     {
-      title: "Status",
-      dataIndex: "ativo",
+      title: "Admin",
+      dataIndex: "isAdmin",
       width: "25%",
       editable: true,
-      ...getColumnSearchProps("ativo"),
+      ...getColumnSearchProps("isAdmin"),
       render: (_, record, ativo) => (
         <>
       <Switch
@@ -245,15 +246,31 @@ const UsuariosAdmin = () => {
       )
     },
     {
-        title: "Perfil",
-        dataIndex: "role",
+        title: "Nome",
+        dataIndex: "nome",
         width: "25%",
         editable: true,
         ...getColumnSearchProps("role"),
       },
+
+      {
+        title: "Senha",
+        dataIndex: "senha",
+        width: "25%",
+        editable: true,
+        ...getColumnSearchProps("role"),
+      },
+      {
+        title: "Senha MD5",
+        dataIndex: "senha_md5",
+        width: "25%",
+        editable: true,
+        ...getColumnSearchProps("role"),
+      },
+      
     {
-      title: "operation",
-      dataIndex: "operation",
+      title: "Editar",
+      dataIndex: "edit",
       render: (_, record) => {
         const editable = isEditing(record);
         return editable ? (
@@ -320,7 +337,7 @@ const UsuariosAdmin = () => {
             },
           }}
           bordered
-          dataSource={data}
+          dataSource={dadosUsuario}
           columns={mergedColumns}
           rowClassName="editable-row"
           pagination={{

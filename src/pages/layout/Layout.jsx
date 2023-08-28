@@ -136,7 +136,6 @@ const App = ({ setUsuarioAutenticado, usuarioAutenticado }) => {
     setUsuarioAutenticado(false);
   };
 
-  console.log(isAdmin);
 
   const {
     token: { colorBgContainer },
