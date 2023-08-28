@@ -8,23 +8,32 @@ import {
 import { message, Tabs, notification, Button } from "antd";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { supabase } from "../../../_auth/Supabase";
 
 // eslint-disable-next-line
-export default function LoginPage({ setAutenticado }) {
+export default function LoginPage({ setUsuarioAutenticado }) {
   const navigate = useNavigate();
   const [loginType, setLoginType] = useState("account");
   const [usuario, setUsuario] = useState();
   const [senha, setSenha] = useState();
   const [api, contextHolder] = notification.useNotification();
-  const handleLogin = () => {
-    if (usuario === "usuario" && senha === "senha") {
-      // Simulação de lógica de autenticação
+
+  const handleLogin = async () => {
+    const { data } = await supabase
+      .from("usuario")
+      .select("*")
+      .like("usuario", `%${usuario}%`);
+    if (
+      data.length > 0 &&
+      usuario === data[0].usuario &&
+      senha === data[0].senha
+    ) {
       api.success({
         message: `Redirencionando`,
         description: "Usuário Autenticado ! (:",
       });
       setTimeout(() => {
-        setAutenticado(true);
+        setUsuarioAutenticado({ data });
         navigate("/dashboard");
       }, 2000); // Atraso de 2 segundos
     } else {
@@ -32,9 +41,9 @@ export default function LoginPage({ setAutenticado }) {
         message: `Dados invalidos`,
         description: "Usuário ou Senha incorreto",
       });
-      // Simulação de lógica de autenticação
     }
   };
+
   return (
     <div
       style={{
@@ -87,7 +96,6 @@ export default function LoginPage({ setAutenticado }) {
                   message: "Por favor, insira o nome de usuário!",
                 },
               ]}
-              value={usuario}
               onChange={(e) => setUsuario(e.target.value)}
             />
             <ProFormText.Password
@@ -96,14 +104,13 @@ export default function LoginPage({ setAutenticado }) {
                 size: "large",
                 prefix: <LockOutlined className={"prefixoIcone"} />,
               }}
-              placeholder={"Senha: ant.design"}
+              placeholder={"Senha"}
               rules={[
                 {
                   required: true,
                   message: "Por favor, insira a senha!",
                 },
               ]}
-              value={senha}
               onChange={(e) => setSenha(e.target.value)}
             />
           </>

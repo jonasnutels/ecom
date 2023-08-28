@@ -12,6 +12,7 @@
   "dependencies": {
     "@ant-design/pro-components": "^2.6.13",
     "@ant-design/pro-form": "^2.18.1",
+    "@supabase/supabase-js": "^2.33.1",
     "antd": "^5.8.4",
     "formik": "^2.4.3",
     "react": "^18.2.0",

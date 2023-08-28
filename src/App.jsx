@@ -12,11 +12,11 @@ import Crediario from "./pages/components/Financeiro/Crediario/Crediario";
 import UsuariosAdmin from "./pages/components/Admin/Usuarios/UsuariosAdmin";
 import PermissoesAdmin from "./pages/components/Admin/Permissoes/Permissoes";
 function App() {
-  const [autenticado, setAutenticado] = useState();
+  const [usuarioAutenticado, setUsuarioAutenticado] = useState();
   const router = createBrowserRouter([
-    { element: <LoginPage setAutenticado={setAutenticado} />, path: "/", errorElement: <><a href="/">Pagina não encontrada (Click para voltar)</a></> },
+    { element: <LoginPage setUsuarioAutenticado={setUsuarioAutenticado} />, path: "/", errorElement: <><a href="/">Pagina não encontrada (Click para voltar)</a></> },
     {
-      element: autenticado ? <LayoutPadrao  setAutenticado={setAutenticado}/> : <LoginPage setAutenticado={setAutenticado} />,
+      element: usuarioAutenticado ? <LayoutPadrao  setUsuarioAutenticado={setUsuarioAutenticado} usuarioAutenticado={usuarioAutenticado}/> : <LoginPage setUsuarioAutenticado={setUsuarioAutenticado} />,
       children: [
         {
           path: "/cadastropessoafisica",
@@ -48,7 +48,7 @@ function App() {
         },
         {
           path: "/usuariosadmin",
-          element: <UsuariosAdmin />,
+          element:  <UsuariosAdmin />,
         },
         {
           path: "/permissoes",
